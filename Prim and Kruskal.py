@@ -1,3 +1,7 @@
+"""
+Run prim and kruskal algorithms and compare time they takes for a different
+number of nodes
+"""
 import random
 import networkx as nx
 import time
@@ -37,13 +41,13 @@ def prim_algorithm(graph, starting_node=0):
     :param starting_node: number of node from which you want to start building
     graph
     :return: minimum spanning tree, list of edges with it's weight
-    >>> prim_algorithm(gnp_random_connected_graph(10, 0.9))
     """
+
     def extracting_graph_prim(g):
         """
-
-        :param g:
-        :return:
+        Get values from graph
+        :param g: graph
+        :return: edges, nodes and ways to vertices
         """
         vertices_edges = []
         ways_to_vertices = []
@@ -56,7 +60,6 @@ def prim_algorithm(graph, starting_node=0):
             vertices_edges[u].add(tuple([u, v, w["weight"]]))
             vertices_edges[v].add(tuple([u, v, w["weight"]]))
         return vertices_edges, i, ways_to_vertices
-
 
     vertices_edges, nodes, ways_to_vertices = extracting_graph_prim(graph)
     nuv_set = set(range(1, nodes))
@@ -92,7 +95,6 @@ def kruskal_algorithm(graph):
     :param graph: undirected graph, similarly to an Erdős-Rényi graph, but
     enforcing that the resulting graph is connected
     :return: minimum spanning tree, list of edges with it's weight
-    >>> kruskal_algorithm(gnp_random_connected_graph(10, 0.9))
     """
     vertices_count = len(graph.nodes)
     edges = list(graph.edges(data=True))
@@ -123,8 +125,7 @@ def kruskal_algorithm(graph):
 def measuring_time(func):
     """
     Calculate time spent on function
-    :param func: unction
-    :return:
+    :param func: function
     """
     time_dict = {}
     for num_of_nodes in [5, 10, 20, 50, 100, 200, 500, 1000]:
@@ -143,14 +144,7 @@ def measuring_time(func):
 
 
 if __name__ == "__main__":
+    print("Time spent on prim algorithm:")
     measuring_time(prim_algorithm)
+    print("Time spent on kruskal algorithm:")
     measuring_time(kruskal_algorithm)
-    graph_1 = gnp_random_connected_graph(10, 0.9)
-    value_prim = 0
-    value_kruskal = 0
-    for elements in prim_algorithm(graph_1):
-        value_prim += elements[2]['weight']
-    for elements in kruskal_algorithm(graph_1):
-        value_kruskal += elements[2]['weight']
-    print(value_prim)
-    print(value_kruskal)
