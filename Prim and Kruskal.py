@@ -6,7 +6,7 @@ import random
 import networkx as nx
 import time
 from tqdm import tqdm
-
+import matplotlib.pyplot as plt
 from itertools import combinations, groupby
 
 NUM_OF_ITERATIONS = 3
@@ -51,15 +51,15 @@ def prim_algorithm(graph, starting_node=0):
         """
         vertices_edges = []
         ways_to_vertices = []
-        i = 0
+        nodes = 0
         for _ in g.nodes():
             vertices_edges.append(set())
             ways_to_vertices.append({})
-            i += 1
+            nodes += 1
         for (u, v, w) in g.edges(data=True):
             vertices_edges[u].add(tuple([u, v, w["weight"]]))
             vertices_edges[v].add(tuple([u, v, w["weight"]]))
-        return vertices_edges, i, ways_to_vertices
+        return vertices_edges, nodes, ways_to_vertices
 
     vertices_edges, nodes, ways_to_vertices = extracting_graph_prim(graph)
     nuv_set = set(range(1, nodes))
@@ -128,7 +128,10 @@ def measuring_time(func):
     :param func: function
     """
     time_dict = {}
-    for num_of_nodes in [5, 10, 20, 50, 100, 200, 500, 1000]:
+    list_of_nodes_quantity = [5, 10, 20, 50, 100, 200, 500, 1000]
+    for _ in range(20):
+        list_of_nodes_quantity.append(list_of_nodes_quantity[-1]+100)
+    for num_of_nodes in list_of_nodes_quantity:
         time_taken = 0
         for i in tqdm(range(NUM_OF_ITERATIONS)):
             # note that we should not measure time of graph creation
@@ -140,6 +143,15 @@ def measuring_time(func):
             time_taken += end - start
 
         time_dict[num_of_nodes] = time_taken / NUM_OF_ITERATIONS
+
+    data_dict = {"nodes": list(time_dict.keys()),
+                 "time": list(time_dict.values())}
+    if func == prim_algorithm:
+        plt.plot("nodes", "time", data=data_dict, label="Prim", marker='o',
+                 linewidth=2, markersize=4)
+    else:
+        plt.plot("nodes", "time", data=data_dict, label="Kruskal", marker='o',
+                 linewidth=2, markersize=4)
     print(time_dict)
 
 
@@ -148,3 +160,4 @@ if __name__ == "__main__":
     measuring_time(prim_algorithm)
     print("Time spent on kruskal algorithm:")
     measuring_time(kruskal_algorithm)
+    plt.show()
